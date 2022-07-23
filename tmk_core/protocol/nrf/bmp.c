@@ -498,6 +498,15 @@ const bmp_api_config_t default_config = {
 #endif
 };
 
+uint16_t get_lipo_mv()
+{
+  int16_t vdiv_d = -1;
+  int16_t lipo_mv = 0;
+  BMPAPI->adc.sample_and_convert(1, &vdiv_d);
+  lipo_mv = 5049 * vdiv_d / 4095;
+  return lipo_mv;
+}
+
 void bmp_init()
 {
 
@@ -535,13 +544,23 @@ void bmp_init()
   BMPAPI->usb.set_raw_receive_cb(bmp_hid_raw_receive_cb);
   BMPAPI->ble.set_raw_receive_cb(bmp_ble_raw_receive_cb);
 
-  uint16_t vcc_percent = BMPAPI->app.get_vcc_percent();
+  // init ADC
+  BMPAPI->adc.config_channel(1, 3);
+  //uint16_t vcc_percent = BMPAPI->app.get_vcc_percent();
   int32_t battery_level = 1;
-
+  /*
   if (vcc_percent > 70) {
     battery_level = 3;
   }
   else if (vcc_percent > 30) {
+    battery_level = 2;
+  }
+  */
+
+  if (get_lipo_mv() > 3850) {
+    battery_level = 3;
+  }
+  else if (get_lipo_mv() > 3675) {
     battery_level = 2;
   }
 
@@ -766,7 +785,8 @@ bool process_record_user_bmp(uint16_t keycode, keyrecord_t* record) {
                 BMPAPI->web_config.enter();
                 return false;
             case BATT_LV:
-                snprintf(str, sizeof(str), "%4dmV", BMPAPI->app.get_vcc_mv());
+                snprintf(str, sizeof(str), "%4dmV", get_lipo_mv());
+                //snprintf(str, sizeof(str), "%4dmV", BMPAPI->app.get_vcc_mv());
                 send_string(str);
                 return false;
             case SAVE_EE:
