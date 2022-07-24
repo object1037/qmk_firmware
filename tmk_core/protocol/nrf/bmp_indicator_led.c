@@ -149,7 +149,24 @@ static int bmp_indicator_connecting(uint32_t time_ms, int32_t option) {
     return 1;
 }
 
-__attribute__((weak)) int bmp_indicator_user_pattern(uint32_t time_ms, int32_t option) { return 1; }
+__attribute__((weak)) int bmp_indicator_user_pattern(uint32_t time_ms, int32_t option) {
+    const uint32_t period = 1500;
+    uint32_t time_in_period = time_ms % period;
+
+    if (time_in_period > 0 && time_in_period <100) {
+        bmp_indicator_led_on();
+    }
+    else {
+        bmp_indicator_led_off();
+    }
+
+    if (time_ms > 150000) {
+        bmp_indicator_led_off();
+        return 1;
+    }
+
+    return 0;
+}
 
 typedef int (*bmp_indicator_task_t)(uint32_t time_ms, int32_t option);
 const static bmp_indicator_task_t indicator_tasks[INDICATOR_END] = {

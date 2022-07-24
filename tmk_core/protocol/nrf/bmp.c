@@ -566,6 +566,9 @@ void bmp_init()
 
   bmp_indicator_set(INDICATOR_BATTERY, battery_level);
 
+  if (get_lipo_mv() < 3050) {
+    bmp_indicator_set(INDICATOR_USER, 0);
+  }
 
   if (!is_safe_mode_) {
 #if defined(ALLOW_MSC_ROW_PIN) && defined(ALLOW_MSC_COL_PIN)
