@@ -150,7 +150,7 @@ static int bmp_indicator_connecting(uint32_t time_ms, int32_t option) {
 }
 
 __attribute__((weak)) int bmp_indicator_user_pattern(uint32_t time_ms, int32_t option) {
-    const uint32_t period = 1500;
+    const uint32_t period = 1000;
     uint32_t time_in_period = time_ms % period;
 
     if (time_in_period > 0 && time_in_period <100) {
@@ -160,7 +160,7 @@ __attribute__((weak)) int bmp_indicator_user_pattern(uint32_t time_ms, int32_t o
         bmp_indicator_led_off();
     }
 
-    if (time_ms > 150000) {
+    if (time_ms > 15000) {
         bmp_indicator_led_off();
         return 1;
     }

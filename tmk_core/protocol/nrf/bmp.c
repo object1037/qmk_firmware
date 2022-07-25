@@ -568,6 +568,7 @@ void bmp_init()
 
   if (get_lipo_mv() < 3050) {
     bmp_indicator_set(INDICATOR_USER, 0);
+    sleep_enter_counter = 1000;
   }
 
   if (!is_safe_mode_) {
